@@ -1,0 +1,338 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  role      UserRole
+  isApproved Boolean @default(false)
+  approvedAt DateTime?
+  approvedBy String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  center      Center?      @relation(fields: [centerId], references: [id])
+  centerId    String?      @unique
+  patient     Patient?     @relation(fields: [patientId], references: [id])
+  patientId   String?      @unique
+  physio      Physio?      @relation(fields: [physioId], references: [id])
+  physioId    String?      @unique
+  nutritionist Nutritionist? @relation(fields: [nutritionistId], references: [id])
+  nutritionistId String?   @unique
+
+  @@map("users")
+}
+
+model Center {
+  id          String   @id @default(cuid())
+  name        String
+  address     String
+  phone       String
+  email       String   @unique
+  license     String   @unique
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  users       User[]
+  physios     Physio[]
+  patients    CenterPatient[] // Soft relationship through join table
+  physios_center CenterPhysio[] // Soft relationship through join table
+  appointments Appointment[]
+
+  @@map("centers")
+}
+
+model Patient {
+  id          String   @id @default(cuid())
+  firstName   String
+  lastName    String
+  dateOfBirth DateTime
+  gender      Gender
+  phone       String
+  email       String?
+  address     String?
+  emergencyContact String?
+  emergencyPhone   String?
+  medicalHistory   String?
+  currentCondition String?
+  rehabGoals       String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  user        User?
+  physio      Physio?  @relation(fields: [physioId], references: [id])
+  physioId    String?
+  centers     CenterPatient[] // Soft relationship through join table
+  appointments Appointment[]
+  progressReports ProgressReport[]
+  prescriptions Prescription[]
+  progressEntries ProgressEntry[]
+
+  @@map("patients")
+}
+
+// Join table for center-patient relationships
+model CenterPatient {
+  id          String   @id @default(cuid())
+  center      Center   @relation(fields: [centerId], references: [id])
+  centerId    String
+  patient     Patient  @relation(fields: [patientId], references: [id])
+  patientId   String
+  isActive    Boolean  @default(true)
+  addedAt     DateTime @default(now())
+  notes       String?
+
+  @@unique([centerId, patientId])
+  @@map("center_patients")
+}
+
+// Join table for center-physio relationships
+model CenterPhysio {
+  id          String   @id @default(cuid())
+  center      Center   @relation(fields: [centerId], references: [id])
+  centerId    String
+  physio      Physio   @relation(fields: [physioId], references: [id])
+  physioId    String
+  isActive    Boolean  @default(true)
+  addedAt     DateTime @default(now())
+  notes       String?
+
+  @@unique([centerId, physioId])
+  @@map("center_physios")
+}
+
+model Physio {
+  id          String   @id @default(cuid())
+  firstName   String
+  lastName    String
+  license     String
+  specialization String?
+  phone       String
+  email       String
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  center      Center?  @relation(fields: [centerId], references: [id])
+  centerId    String?
+  user        User?
+  patients    Patient[] // Optional relation since patients may not have a physio assigned
+  centers     CenterPhysio[] // Soft relationship through join table
+  appointments Appointment[]
+  progressReports ProgressReport[]
+  prescriptions Prescription[]
+
+  @@map("physios")
+}
+
+model Nutritionist {
+  id          String   @id @default(cuid())
+  firstName   String
+  lastName    String
+  license     String
+  specialization String?
+  phone       String
+  email       String
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  user        User?
+
+  @@map("nutritionists")
+}
+
+model Exercise {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  category    String
+  difficulty  Difficulty
+  duration    Int      // in minutes
+  reps        Int?
+  sets        Int?
+  frequency   String   // daily, weekly, etc.
+  videoUrl    String?
+  imageUrl    String?
+  instructions String?
+  isActive    Boolean  @default(true)
+  source      String?  // 'wger', 'musclewiki', 'manual'
+  sourceId    String?  // ID from external source
+  metadata    Json?    // Additional metadata from external sources
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([source, sourceId])
+  @@map("exercises")
+}
+
+model Prescription {
+  id          String   @id @default(cuid())
+  startDate   DateTime
+  endDate     DateTime
+  status      PrescriptionStatus @default(ACTIVE)
+  notes       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  patient     Patient  @relation(fields: [patientId], references: [id])
+  patientId   String
+  physio      Physio   @relation(fields: [physioId], references: [id])
+  physioId    String
+  items       PrescriptionExercise[]
+  progressReports ProgressReport[]
+
+  @@map("prescriptions")
+}
+
+// Join model for exercises included in a prescription with sets/reps and ordering
+model PrescriptionExercise {
+  id               String   @id @default(cuid())
+  prescription     Prescription @relation(fields: [prescriptionId], references: [id])
+  prescriptionId   String
+  // Optional reference id to source exercise (not a relation)
+  exerciseRefId    String?
+  // Denormalized exercise fields at time of prescription
+  name             String
+  description      String?
+  category         String
+  difficulty       Difficulty
+  duration         Int
+  imageUrl         String?
+  videoUrl         String?
+  instructions     String?
+  // Plan specifics
+  sets             Int
+  reps             Int
+  notes            String?
+  orderIndex       Int       @default(0)
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  @@map("prescription_exercises")
+}
+
+model Appointment {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  startTime   DateTime
+  endTime     DateTime
+  type        AppointmentType
+  status      AppointmentStatus @default(SCHEDULED)
+  meetingUrl  String?
+  notes       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  center      Center   @relation(fields: [centerId], references: [id])
+  centerId    String
+  patient     Patient  @relation(fields: [patientId], references: [id])
+  patientId   String
+  physio      Physio   @relation(fields: [physioId], references: [id])
+  physioId    String
+
+  @@map("appointments")
+}
+
+model ProgressReport {
+  id          String   @id @default(cuid())
+  painScore   Int      // 1-10
+  mobilityScore Int    // 1-10
+  adherencePercentage Int // 0-100
+  notes       String?
+  reportedAt  DateTime @default(now())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  patient     Patient  @relation(fields: [patientId], references: [id])
+  patientId   String
+  physio      Physio   @relation(fields: [physioId], references: [id])
+  physioId    String
+  prescription Prescription? @relation(fields: [prescriptionId], references: [id])
+  prescriptionId String?
+
+  @@map("progress_reports")
+}
+
+model ProgressEntry {
+  id          String   @id @default(cuid())
+  painScore   Int      // 1-10
+  moodScore   Int      // 1-10
+  mobilityScore Int    // 1-10
+  medicationAdherence Boolean // Yes/No
+  exerciseAdherence Boolean   // Yes/No
+  notes       String?
+  entryDate   DateTime @default(now())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  patient     Patient  @relation(fields: [patientId], references: [id])
+  patientId   String
+
+  @@map("progress_entries")
+}
+
+// Enums
+enum UserRole {
+  ADMIN
+  PHYSIO
+  PATIENT
+  NUTRITIONIST
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+}
+
+enum Difficulty {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+}
+
+enum PrescriptionStatus {
+  ACTIVE
+  COMPLETED
+  CANCELLED
+  PAUSED
+}
+
+enum AppointmentType {
+  FOLLOW_UP
+  CONSULTATION
+  ASSESSMENT
+  EMERGENCY
+}
+
+enum AppointmentStatus {
+  SCHEDULED
+  CONFIRMED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+  NO_SHOW
+}

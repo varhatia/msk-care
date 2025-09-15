@@ -46,10 +46,12 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Center not found' }, { status: 404 })
     }
 
+    const centerId = user.center.id
+
     // Verify that the physio belongs to this center
     const centerPhysio = await prisma.centerPhysio.findFirst({
       where: {
-        centerId: user.center.id,
+        centerId: centerId,
         physioId: validatedData.physioId,
         isActive: true,
       },
@@ -96,7 +98,7 @@ export async function POST(request: NextRequest) {
       let centerPatient = await tx.centerPatient.findFirst({
         where: {
           patientId: validatedData.patientId,
-          centerId: user.center.id,
+          centerId: centerId,
           isActive: true,
         },
       })
@@ -104,7 +106,7 @@ export async function POST(request: NextRequest) {
       if (!centerPatient) {
         centerPatient = await tx.centerPatient.create({
           data: {
-            centerId: user.center.id,
+            centerId: centerId,
             patientId: validatedData.patientId,
             notes: validatedData.notes || 'Linked and assigned to physio',
           },

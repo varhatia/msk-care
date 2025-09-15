@@ -162,6 +162,28 @@ A comprehensive mHealth web application for rehabilitation centers and patients,
          - node_modules/**/*
    ```
 
+   **Alternative: Use amplify.yml file**
+   Create an `amplify.yml` file in your project root:
+   ```yaml
+   version: 1
+   frontend:
+     phases:
+       preBuild:
+         commands:
+           - npm ci
+           - npx prisma generate
+       build:
+         commands:
+           - npm run build
+     artifacts:
+       baseDirectory: .next
+       files:
+         - '**/*'
+     cache:
+       paths:
+         - node_modules/**/*
+   ```
+
 3. **Environment Variables**
    - Add all environment variables from `.env.local`
    - Set `NEXTAUTH_URL` to your Amplify domain

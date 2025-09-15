@@ -56,6 +56,8 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Center not found' }, { status: 404 });
     }
 
+    const centerId = user.center.id;
+
     // Handle detail=patients for a specific physio
     const { searchParams } = new URL(request.url)
     const detail = searchParams.get('detail')
@@ -64,7 +66,7 @@ export async function GET(request: NextRequest) {
     if (detail === 'patients' && physioIdParam) {
       // Ensure physio is linked to center
       const rel = await prisma.centerPhysio.findFirst({
-        where: { centerId: user.center.id, physioId: physioIdParam, isActive: true },
+        where: { centerId: centerId, physioId: physioIdParam, isActive: true },
       })
       if (!rel) {
         return NextResponse.json({ error: 'Physio not linked to this center' }, { status: 404 })
@@ -78,7 +80,7 @@ export async function GET(request: NextRequest) {
       const physioPatientIds = Array.from(new Set(physioPatientIdsData.map(p => p.patientId)))
 
       const centerPatientIdsData = await prisma.centerPatient.findMany({
-        where: { centerId: user.center.id, isActive: true, patientId: { in: physioPatientIds } },
+        where: { centerId: centerId, isActive: true, patientId: { in: physioPatientIds } },
         select: { patientId: true },
       })
       const targetPatientIds = centerPatientIdsData.map(p => p.patientId)
@@ -102,7 +104,7 @@ export async function GET(request: NextRequest) {
           select: { painScore: true, mobilityScore: true },
         })
         const lastAppt = await prisma.appointment.findFirst({
-          where: { centerId: user.center.id, physioId: physioIdParam, patientId: p.id },
+          where: { centerId: centerId, physioId: physioIdParam, patientId: p.id },
           orderBy: { startTime: 'desc' },
           select: { notes: true },
         })
@@ -124,7 +126,7 @@ export async function GET(request: NextRequest) {
     // Get all physios linked to this center through CenterPhysio
     const centerPhysios = await prisma.centerPhysio.findMany({
       where: {
-        centerId: user.center.id,
+        centerId: centerId,
         isActive: true,
       },
       include: {
@@ -244,10 +246,12 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if relationship already exists
+    const centerId = user.center.id;
+
     const existingRelationship = await prisma.centerPhysio.findUnique({
       where: {
         centerId_physioId: {
-          centerId: user.center.id,
+          centerId: centerId,
           physioId: validatedData.physioId,
         },
       },
@@ -272,7 +276,7 @@ export async function POST(request: NextRequest) {
     // Create new relationship
     await prisma.centerPhysio.create({
       data: {
-        centerId: user.center.id,
+        centerId: centerId,
         physioId: validatedData.physioId,
         notes: validatedData.notes,
       },

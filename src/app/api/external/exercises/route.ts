@@ -150,11 +150,13 @@ async function processAndSaveExercises(
       const equipment = exercise.equipment.map(e => e.name).join(', ');
       const mainImage = exercise.images.find(img => img.is_main)?.image || exercise.images[0]?.image;
 
-      const exerciseData = {
+      const mappedDifficultyWger: 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED' = 'INTERMEDIATE'
+
+      const exerciseCreateData = {
         name: exercise.name,
         description: exercise.description || 'No description available',
         category: exercise.category.name,
-        difficulty: 'INTERMEDIATE', // Default difficulty
+        difficulty: mappedDifficultyWger, // Default difficulty
         duration: 15, // Default duration
         reps: 10, // Default reps
         sets: 3, // Default sets
@@ -173,6 +175,11 @@ async function processAndSaveExercises(
         },
       };
 
+      const exerciseUpdateData = {
+        ...exerciseCreateData,
+        difficulty: { set: mappedDifficultyWger },
+      } as const
+
       const savedExercise = await prisma.exercise.upsert({
         where: {
           source_sourceId: {
@@ -180,8 +187,8 @@ async function processAndSaveExercises(
             sourceId: exercise.id.toString(),
           },
         },
-        update: exerciseData,
-        create: exerciseData,
+        update: exerciseUpdateData,
+        create: exerciseCreateData,
       });
 
       savedExercises.push(savedExercise);
@@ -193,17 +200,19 @@ async function processAndSaveExercises(
   // Process MuscleWiki exercises
   for (const exercise of muscleWikiExercises) {
     try {
-      const difficultyMap: Record<string, string> = {
+      const difficultyMap: Record<string, 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED'> = {
         'Beginner': 'BEGINNER',
         'Intermediate': 'INTERMEDIATE',
         'Advanced': 'ADVANCED',
       };
 
-      const exerciseData = {
+      const mappedDifficulty = difficultyMap[exercise.Difficulty] || 'INTERMEDIATE'
+
+      const exerciseCreateData = {
         name: exercise.exercise_name,
         description: exercise.details || exercise.steps.join(' '),
         category: exercise.Category,
-        difficulty: difficultyMap[exercise.Difficulty] || 'INTERMEDIATE',
+        difficulty: mappedDifficulty,
         duration: 15, // Default duration
         reps: 10, // Default reps
         sets: 3, // Default sets
@@ -223,6 +232,11 @@ async function processAndSaveExercises(
         },
       };
 
+      const exerciseUpdateData = {
+        ...exerciseCreateData,
+        difficulty: { set: mappedDifficulty },
+      } as const
+
       const savedExercise = await prisma.exercise.upsert({
         where: {
           source_sourceId: {
@@ -230,8 +244,8 @@ async function processAndSaveExercises(
             sourceId: exercise.id.toString(),
           },
         },
-        update: exerciseData,
-        create: exerciseData,
+        update: exerciseUpdateData,
+        create: exerciseCreateData,
       });
 
       savedExercises.push(savedExercise);

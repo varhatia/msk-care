@@ -9,7 +9,7 @@ const createAppointmentSchema = z.object({
   centerId: z.string().min(1, 'Center ID is required'),
   startTime: z.string().min(1, 'Start time is required'),
   endTime: z.string().min(1, 'End time is required'),
-  type: z.enum(['CONSULTATION', 'FOLLOW_UP', 'ASSESSMENT', 'TREATMENT']),
+  type: z.enum(['CONSULTATION', 'FOLLOW_UP', 'ASSESSMENT', 'EMERGENCY']),
   title: z.string().min(1, 'Title is required'),
   description: z.string().optional(),
   notes: z.string().optional()

@@ -63,18 +63,17 @@ export async function POST(request: NextRequest) {
               email: true
             }
           },
-          prescriptionExercises: {
-            include: {
-              exercise: {
-                select: {
-                  name: true,
-                  description: true,
-                  category: true,
-                  difficulty: true
-                }
-              }
-            },
-            orderBy: { order: 'asc' }
+          items: {
+            orderBy: { orderIndex: 'asc' },
+            select: {
+              name: true,
+              description: true,
+              category: true,
+              difficulty: true,
+              sets: true,
+              reps: true,
+              orderIndex: true
+            }
           }
         },
         orderBy: { createdAt: 'desc' }
@@ -85,14 +84,14 @@ export async function POST(request: NextRequest) {
           startDate: latestPrescription.startDate,
           endDate: latestPrescription.endDate,
           physio: latestPrescription.physio,
-          exercises: latestPrescription.prescriptionExercises.map(pe => ({
-            name: pe.exercise.name,
-            description: pe.exercise.description,
-            category: pe.exercise.category,
-            difficulty: pe.exercise.difficulty,
+          exercises: latestPrescription.items.map(pe => ({
+            name: pe.name,
+            description: pe.description,
+            category: pe.category,
+            difficulty: pe.difficulty,
             sets: pe.sets,
             reps: pe.reps,
-            order: pe.order
+            order: pe.orderIndex
           }))
         };
       }

@@ -46,11 +46,11 @@ export async function GET(request: NextRequest) {
         } 
       }),
       
-      // Exercise plan counts
-      prisma.exercisePlan.count(),
-      prisma.exercisePlan.count({ 
+      // Exercise plan counts (using prescriptions as plans)
+      prisma.prescription.count(),
+      prisma.prescription.count({ 
         where: { 
-          isActive: true 
+          status: 'ACTIVE' 
         } 
       }),
       

@@ -47,9 +47,9 @@ export async function GET(request: NextRequest) {
     const daysActive = uniqueDays.size
     const totalDays = 7
 
-    // Calculate average exercise adherence for active days
-    const totalAdherence = progressEntries.reduce((sum, entry) => sum + entry.exerciseAdherence, 0)
-    const averageAdherence = progressEntries.length > 0 ? totalAdherence / progressEntries.length : 0
+    // Calculate average exercise adherence for active days (as percentage)
+    const totalAdherence = progressEntries.reduce((sum, entry) => sum + (entry.exerciseAdherence ? 1 : 0), 0)
+    const averageAdherence = progressEntries.length > 0 ? (totalAdherence / progressEntries.length) * 100 : 0
 
     // Determine trend based on recent activity
     let trend = 'stable'
@@ -58,8 +58,8 @@ export async function GET(request: NextRequest) {
       const olderEntries = progressEntries.slice(3, 6)
       
       if (recentEntries.length > 0 && olderEntries.length > 0) {
-        const recentAvg = recentEntries.reduce((sum, entry) => sum + entry.exerciseAdherence, 0) / recentEntries.length
-        const olderAvg = olderEntries.reduce((sum, entry) => sum + entry.exerciseAdherence, 0) / olderEntries.length
+        const recentAvg = (recentEntries.reduce((sum, entry) => sum + (entry.exerciseAdherence ? 1 : 0), 0) / recentEntries.length) * 100
+        const olderAvg = (olderEntries.reduce((sum, entry) => sum + (entry.exerciseAdherence ? 1 : 0), 0) / olderEntries.length) * 100
         
         const difference = recentAvg - olderAvg
         if (difference > 10) { // 10% threshold for activity trend

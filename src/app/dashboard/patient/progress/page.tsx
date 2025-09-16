@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 import { useSession } from 'next-auth/react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import DashboardLayout from '@/components/layout/DashboardLayout'
@@ -49,7 +49,7 @@ interface ProgressEntry {
   updatedAt: string
 }
 
-export default function PatientProgressPage() {
+function PatientProgressPageContent() {
   const { data: session, status } = useSession()
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -622,5 +622,13 @@ export default function PatientProgressPage() {
         </div>
       </div>
     </DashboardLayout>
+  )
+}
+
+export default function PatientProgressPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-gray-50 flex items-center justify-center"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div></div>}>
+      <PatientProgressPageContent />
+    </Suspense>
   )
 }

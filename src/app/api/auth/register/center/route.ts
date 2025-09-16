@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
+import { Prisma } from '@prisma/client'
 import bcrypt from 'bcryptjs'
 import { z } from 'zod'
 // import { validateSingleEntityConstraint } from '@/lib/validations'
@@ -97,9 +98,6 @@ export async function POST(request: NextRequest) {
           password: hashedPassword,
           role: 'ADMIN',
           centerId: center.id,
-          isApproved: false,
-          approvedAt: null,
-          approvedBy: null
         }
       })
       
@@ -120,16 +118,32 @@ export async function POST(request: NextRequest) {
     
   } catch (error) {
     console.error('Center registration error:', error)
-    
+
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Validation failed', details: error.errors },
         { status: 400 }
       )
     }
-    
+
+    // Prisma known request errors (e.g., unique constraint violations)
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      if (error.code === 'P2002') {
+        // Unique constraint failed
+        return NextResponse.json(
+          { error: 'Unique constraint failed on one or more fields (email or license already exists)' },
+          { status: 400 }
+        )
+      }
+      return NextResponse.json(
+        { error: `Database error (${error.code})` },
+        { status: 500 }
+      )
+    }
+
+    // Environment / connection errors surface as generic errors in serverless envs
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: 'Internal server error. Please verify DATABASE_URL connectivity and required env vars.' },
       { status: 500 }
     )
   }

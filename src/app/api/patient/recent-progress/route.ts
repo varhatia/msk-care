@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/db'
+
+export const dynamic = 'force-dynamic'
 import { subDays } from 'date-fns'
 
 export async function GET(request: NextRequest) {

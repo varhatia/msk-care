@@ -4,6 +4,8 @@ import bcrypt from 'bcryptjs'
 import { z } from 'zod'
 // import { validateSingleEntityConstraint } from '@/lib/validations'
 
+export const dynamic = 'force-dynamic'
+
 // Validation schema for patient registration
 const patientRegistrationSchema = z.object({
   firstName: z.string().min(2, 'First name must be at least 2 characters'),

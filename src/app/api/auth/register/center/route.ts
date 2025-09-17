@@ -5,6 +5,8 @@ import bcrypt from 'bcryptjs'
 import { z } from 'zod'
 // import { validateSingleEntityConstraint } from '@/lib/validations'
 
+export const dynamic = 'force-dynamic'
+
 // Validation schema for center registration
 const centerRegistrationSchema = z.object({
   name: z.string().min(2, 'Center name must be at least 2 characters'),

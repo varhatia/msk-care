@@ -12,13 +12,14 @@
     "db:setup": "tsx scripts/setup-db.ts",
     "db:studio": "prisma studio",
     "db:push": "prisma db push",
-    "db:generate": "prisma generate"
+    "db:generate": "prisma generate",
+    "seed:admin": "tsx scripts/seed-admin.ts"
   },
   "dependencies": {
     "@headlessui/react": "^1.7.0",
     "@heroicons/react": "^2.0.0",
     "@hookform/resolvers": "^3.3.0",
-    "@prisma/client": "^5.0.0",
+    "@prisma/client": "^6.16.2",
     "@tailwindcss/forms": "^0.5.10",
     "@tailwindcss/typography": "^0.5.16",
     "@tanstack/react-query": "^5.0.0",
@@ -38,7 +39,6 @@
     "next": "^14.0.0",
     "next-auth": "^4.24.0",
     "postcss": "^8.4.0",
-    "prisma": "^5.0.0",
     "pusher-js": "^8.3.0",
     "react": "^18.2.0",
     "react-beautiful-dnd": "^13.1.1",
@@ -69,6 +69,7 @@
     "@types/react-dropzone": "^5.1.0",
     "eslint": "^8.0.0",
     "eslint-config-next": "^14.0.0",
+    "prisma": "^6.16.2",
     "tsx": "^4.0.0"
   }
 }

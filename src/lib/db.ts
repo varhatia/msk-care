@@ -3,9 +3,10 @@ import { PrismaClient } from '@prisma/client'
 // Ensure a single PrismaClient instance across hot reloads in development
 const globalForPrisma = global as unknown as { prisma?: PrismaClient }
 
-// Validate DATABASE_URL is present
+// Soft-check DATABASE_URL to avoid crashing at import time in serverless
 if (!process.env.DATABASE_URL) {
-  throw new Error('DATABASE_URL environment variable is not set')
+  // eslint-disable-next-line no-console
+  console.warn('DATABASE_URL is not set. Prisma may fail at first query.');
 }
 
 export const prisma: PrismaClient =

@@ -1,0 +1,11 @@
+version: '3.8'
+services:
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - DATABASE_URL=postgresql://mskcareadmin:mskcare_150925@mskcare.c3aqqo6q4oxi.ap-southeast-2.rds.amazonaws.com/mskcaredb?sslmode=require&schema=public
+      - NEXTAUTH_URL=https://ec2-3-26-6-165.ap-southeast-2.compute.amazonaws.com:3000
+      - NEXTAUTH_SECRET=RhK33JE2PLMokMWqsGIhEkJFMDqpjZ8NMX9dck0Z4Jw=
+    restart: unless-stopped

@@ -18,6 +18,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import toast from 'react-hot-toast'
 import PasswordInput from '@/components/ui/PasswordInput'
+import ConfirmPasswordInput from '@/components/ui/ConfirmPasswordInput'
 import { passwordSchema } from '@/lib/passwordValidation'
 
 const centerSchema = z.object({
@@ -446,32 +447,14 @@ function RegisterPageContent() {
                 </div>
 
                 <div>
-                  <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
-                    Confirm Password *
-                  </label>
-                  <div className="mt-1 relative">
-                    <input
-                      id="confirmPassword"
-                      type={showConfirmPassword ? 'text' : 'password'}
-                      {...centerForm.register('confirmPassword')}
-                      className="input-field pr-10"
-                      placeholder="Confirm password"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                      className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                    >
-                      {showConfirmPassword ? (
-                        <EyeSlashIcon className="h-5 w-5 text-gray-400" />
-                      ) : (
-                        <EyeIcon className="h-5 w-5 text-gray-400" />
-                      )}
-                    </button>
-                  </div>
-                  {centerForm.formState.errors.confirmPassword && (
-                    <p className="mt-1 text-sm text-error-600">{centerForm.formState.errors.confirmPassword.message}</p>
-                  )}
+                  <ConfirmPasswordInput
+                    value={centerForm.watch('confirmPassword') || ''}
+                    onChange={(value) => centerForm.setValue('confirmPassword', value)}
+                    label="Confirm Password"
+                    placeholder="Confirm password"
+                    error={centerForm.formState.errors.confirmPassword?.message}
+                    required={true}
+                  />
                 </div>
               </div>
 
@@ -669,32 +652,14 @@ function RegisterPageContent() {
                 </div>
 
                 <div>
-                  <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
-                    Confirm Password *
-                  </label>
-                  <div className="mt-1 relative">
-                    <input
-                      id="confirmPassword"
-                      type={showConfirmPassword ? 'text' : 'password'}
-                      {...patientForm.register('confirmPassword')}
-                      className="input-field pr-10"
-                      placeholder="Confirm password"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                      className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                    >
-                      {showConfirmPassword ? (
-                        <EyeSlashIcon className="h-5 w-5 text-gray-400" />
-                      ) : (
-                        <EyeIcon className="h-5 w-5 text-gray-400" />
-                      )}
-                    </button>
-                  </div>
-                  {patientForm.formState.errors.confirmPassword && (
-                    <p className="mt-1 text-sm text-error-600">{patientForm.formState.errors.confirmPassword.message}</p>
-                  )}
+                  <ConfirmPasswordInput
+                    value={patientForm.watch('confirmPassword') || ''}
+                    onChange={(value) => patientForm.setValue('confirmPassword', value)}
+                    label="Confirm Password"
+                    placeholder="Confirm password"
+                    error={patientForm.formState.errors.confirmPassword?.message}
+                    required={true}
+                  />
                 </div>
               </div>
 
@@ -854,32 +819,14 @@ function RegisterPageContent() {
                 </div>
 
                 <div>
-                  <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
-                    Confirm Password *
-                  </label>
-                  <div className="mt-1 relative">
-                    <input
-                      id="confirmPassword"
-                      type={showConfirmPassword ? 'text' : 'password'}
-                      {...physioForm.register('confirmPassword')}
-                      className="input-field pr-10"
-                      placeholder="Confirm password"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                      className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                    >
-                      {showConfirmPassword ? (
-                        <EyeSlashIcon className="h-5 w-5 text-gray-400" />
-                      ) : (
-                        <EyeIcon className="h-5 w-5 text-gray-400" />
-                      )}
-                    </button>
-                  </div>
-                  {physioForm.formState.errors.confirmPassword && (
-                    <p className="mt-1 text-sm text-error-600">{physioForm.formState.errors.confirmPassword.message}</p>
-                  )}
+                  <ConfirmPasswordInput
+                    value={physioForm.watch('confirmPassword') || ''}
+                    onChange={(value) => physioForm.setValue('confirmPassword', value)}
+                    label="Confirm Password"
+                    placeholder="Confirm password"
+                    error={physioForm.formState.errors.confirmPassword?.message}
+                    required={true}
+                  />
                 </div>
               </div>
 
@@ -1026,32 +973,14 @@ function RegisterPageContent() {
                 </div>
 
                 <div>
-                  <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
-                    Confirm Password *
-                  </label>
-                  <div className="mt-1 relative">
-                    <input
-                      id="confirmPassword"
-                      type={showConfirmPassword ? 'text' : 'password'}
-                      {...nutritionistForm.register('confirmPassword')}
-                      className="input-field pr-10"
-                      placeholder="Confirm password"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                      className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                    >
-                      {showConfirmPassword ? (
-                        <EyeSlashIcon className="h-5 w-5 text-gray-400" />
-                      ) : (
-                        <EyeIcon className="h-5 w-5 text-gray-400" />
-                      )}
-                    </button>
-                  </div>
-                  {nutritionistForm.formState.errors.confirmPassword && (
-                    <p className="mt-1 text-sm text-error-600">{nutritionistForm.formState.errors.confirmPassword.message}</p>
-                  )}
+                  <ConfirmPasswordInput
+                    value={nutritionistForm.watch('confirmPassword') || ''}
+                    onChange={(value) => nutritionistForm.setValue('confirmPassword', value)}
+                    label="Confirm Password"
+                    placeholder="Confirm password"
+                    error={nutritionistForm.formState.errors.confirmPassword?.message}
+                    required={true}
+                  />
                 </div>
               </div>
 

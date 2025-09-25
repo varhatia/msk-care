@@ -69,7 +69,6 @@ export default function DashboardLayout({
 
   const adminNavigation = [
     { name: 'Dashboard', href: '/dashboard/admin', icon: ChartBarIcon },
-    { name: 'User Approvals', href: '/dashboard/admin/approvals', icon: UserGroupIcon },
     { name: 'Centers', href: '/dashboard/admin/centers', icon: UserIcon },
     { name: 'Physios', href: '/dashboard/admin/physios', icon: HeartIcon },
     { name: 'Patients', href: '/dashboard/admin/patients', icon: UserGroupIcon },

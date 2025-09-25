@@ -82,7 +82,10 @@ export async function POST(request: NextRequest) {
           gender: validatedData.gender,
           phone: validatedData.phone,
           email: validatedData.email,
-          address: validatedData.address || null,
+          addressLine: validatedData.addressLine || null,
+          city: validatedData.city || null,
+          state: validatedData.state || null,
+          country: validatedData.country || null,
           emergencyContact: validatedData.emergencyContact || null,
           emergencyPhone: validatedData.emergencyPhone || null,
 

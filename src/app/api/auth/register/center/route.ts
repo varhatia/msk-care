@@ -11,7 +11,10 @@ export const dynamic = 'force-dynamic'
 // Validation schema for center registration
 const centerRegistrationSchema = z.object({
   name: z.string().min(2, 'Center name must be at least 2 characters'),
-  address: z.string().min(10, 'Address must be at least 10 characters'),
+  addressLine: z.string().min(3, 'Please enter address line'),
+  city: z.string().min(2, 'Please enter city'),
+  state: z.string().min(2, 'Please enter state'),
+  country: z.string().min(2, 'Please enter country'),
   phone: z.string().min(10, 'Phone number must be at least 10 characters'),
   email: emailSchema,
   license: z.string().min(5, 'License number must be at least 5 characters'),
@@ -95,7 +98,10 @@ export async function POST(request: NextRequest) {
       const center = await tx.center.create({
         data: {
           name: validatedData.name,
-          address: validatedData.address,
+          addressLine: validatedData.addressLine,
+          city: validatedData.city,
+          state: validatedData.state,
+          country: validatedData.country,
           phone: validatedData.phone,
           email: validatedData.email,
           license: validatedData.license,

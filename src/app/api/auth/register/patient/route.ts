@@ -32,6 +32,21 @@ export async function POST(request: NextRequest) {
     // Validate input data
     const validatedData = patientRegistrationSchema.parse(body)
     
+    // Check if phone is already registered across entities
+    const [existingCenterByPhone, existingPatientByPhone, existingPhysioByPhone, existingNutritionistByPhone] = await Promise.all([
+      prisma.center.findFirst({ where: { phone: validatedData.phone } }),
+      prisma.patient.findFirst({ where: { phone: validatedData.phone } }),
+      prisma.physio.findFirst({ where: { phone: validatedData.phone } }),
+      prisma.nutritionist.findFirst({ where: { phone: validatedData.phone } })
+    ])
+
+    if (existingCenterByPhone || existingPatientByPhone || existingPhysioByPhone || existingNutritionistByPhone) {
+      return NextResponse.json(
+        { error: 'This phone number is already registered. Please use a different number.' },
+        { status: 400 }
+      )
+    }
+
     // Check if user already exists
     const existingUser = await prisma.user.findUnique({
       where: {

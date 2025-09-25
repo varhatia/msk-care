@@ -19,13 +19,13 @@ import { z } from 'zod'
 import toast from 'react-hot-toast'
 import PasswordInput from '@/components/ui/PasswordInput'
 import ConfirmPasswordInput from '@/components/ui/ConfirmPasswordInput'
-import { passwordSchema } from '@/lib/passwordValidation'
+import { passwordSchema, emailSchema } from '@/lib/passwordValidation'
 
 const centerSchema = z.object({
   centerName: z.string().min(2, 'Center name must be at least 2 characters'),
   address: z.string().min(10, 'Please enter a complete address'),
   phone: z.string().min(10, 'Please enter a valid phone number'),
-  email: z.string().email('Please enter a valid email address'),
+  email: emailSchema,
   license: z.string().min(5, 'Please enter a valid license number'),
   password: passwordSchema,
   confirmPassword: z.string(),
@@ -37,7 +37,7 @@ const centerSchema = z.object({
 const patientSchema = z.object({
   firstName: z.string().min(2, 'First name must be at least 2 characters'),
   lastName: z.string().min(2, 'Last name must be at least 2 characters'),
-  email: z.string().email('Please enter a valid email address'),
+  email: emailSchema,
   phone: z.string().min(10, 'Please enter a valid phone number'),
   dateOfBirth: z.string().min(1, 'Please select your date of birth'),
   gender: z.enum(['MALE', 'FEMALE', 'OTHER']),
@@ -54,7 +54,7 @@ const patientSchema = z.object({
 const physioSchema = z.object({
   firstName: z.string().min(2, 'First name must be at least 2 characters'),
   lastName: z.string().min(2, 'Last name must be at least 2 characters'),
-  email: z.string().email('Please enter a valid email address'),
+  email: emailSchema,
   phone: z.string().min(10, 'Please enter a valid phone number'),
   license: z.string().min(5, 'Please enter a valid license number'),
   specialization: z.string().optional(),
@@ -69,7 +69,7 @@ const physioSchema = z.object({
 const nutritionistSchema = z.object({
   firstName: z.string().min(2, 'First name must be at least 2 characters'),
   lastName: z.string().min(2, 'Last name must be at least 2 characters'),
-  email: z.string().email('Please enter a valid email address'),
+  email: emailSchema,
   phone: z.string().min(10, 'Please enter a valid phone number'),
   license: z.string().min(5, 'Please enter a valid license number'),
   specialization: z.string().optional(),

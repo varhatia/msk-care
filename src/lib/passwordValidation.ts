@@ -1,5 +1,18 @@
 import { z } from 'zod'
 
+// Email validation schema
+// - Proper email format
+// - Trim whitespace
+// - Lowercase normalization can be applied in handlers if needed
+// - Block obviously disposable or malformed TLDs (basic check)
+export const emailSchema = z
+  .string()
+  .trim()
+  .min(5, 'Email is required')
+  .email('Please enter a valid email address')
+  .refine((email) => !/\s/.test(email), 'Email must not contain spaces')
+  .refine((email) => /\.[a-zA-Z]{2,}$/.test(email), 'Email domain must have a valid TLD')
+
 // Password validation schema
 export const passwordSchema = z
   .string()

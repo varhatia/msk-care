@@ -3,7 +3,7 @@ import { prisma } from '@/lib/db'
 import { Prisma } from '@prisma/client'
 import bcrypt from 'bcryptjs'
 import { z } from 'zod'
-import { passwordSchema } from '@/lib/passwordValidation'
+import { passwordSchema, emailSchema } from '@/lib/passwordValidation'
 // import { validateSingleEntityConstraint } from '@/lib/validations'
 
 export const dynamic = 'force-dynamic'
@@ -13,7 +13,7 @@ const centerRegistrationSchema = z.object({
   name: z.string().min(2, 'Center name must be at least 2 characters'),
   address: z.string().min(10, 'Address must be at least 10 characters'),
   phone: z.string().min(10, 'Phone number must be at least 10 characters'),
-  email: z.string().email('Invalid email address'),
+  email: emailSchema,
   license: z.string().min(5, 'License number must be at least 5 characters'),
   password: passwordSchema,
   confirmPassword: z.string()

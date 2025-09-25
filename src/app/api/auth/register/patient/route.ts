@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 import bcrypt from 'bcryptjs'
 import { z } from 'zod'
-import { passwordSchema } from '@/lib/passwordValidation'
+import { passwordSchema, emailSchema } from '@/lib/passwordValidation'
 // import { validateSingleEntityConstraint } from '@/lib/validations'
 
 export const dynamic = 'force-dynamic'
@@ -11,7 +11,7 @@ export const dynamic = 'force-dynamic'
 const patientRegistrationSchema = z.object({
   firstName: z.string().min(2, 'First name must be at least 2 characters'),
   lastName: z.string().min(2, 'Last name must be at least 2 characters'),
-  email: z.string().email('Invalid email address'),
+  email: emailSchema,
   phone: z.string().min(10, 'Phone number must be at least 10 characters'),
   dateOfBirth: z.string().min(1, 'Please select your date of birth'),
   gender: z.enum(['MALE', 'FEMALE', 'OTHER']),

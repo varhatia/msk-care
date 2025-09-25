@@ -3,6 +3,7 @@ import { prisma } from '@/lib/db'
 import { Prisma } from '@prisma/client'
 import bcrypt from 'bcryptjs'
 import { z } from 'zod'
+import { passwordSchema } from '@/lib/passwordValidation'
 // import { validateSingleEntityConstraint } from '@/lib/validations'
 
 export const dynamic = 'force-dynamic'
@@ -14,7 +15,7 @@ const centerRegistrationSchema = z.object({
   phone: z.string().min(10, 'Phone number must be at least 10 characters'),
   email: z.string().email('Invalid email address'),
   license: z.string().min(5, 'License number must be at least 5 characters'),
-  password: z.string().min(8, 'Password must be at least 8 characters'),
+  password: passwordSchema,
   confirmPassword: z.string()
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Passwords don't match",

@@ -4,8 +4,6 @@ import { Suspense, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { 
-  EyeIcon, 
-  EyeSlashIcon, 
   UserGroupIcon, 
   UserIcon,
   HeartIcon,
@@ -19,6 +17,8 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import toast from 'react-hot-toast'
+import PasswordInput from '@/components/ui/PasswordInput'
+import { passwordSchema } from '@/lib/passwordValidation'
 
 const centerSchema = z.object({
   centerName: z.string().min(2, 'Center name must be at least 2 characters'),
@@ -26,7 +26,7 @@ const centerSchema = z.object({
   phone: z.string().min(10, 'Please enter a valid phone number'),
   email: z.string().email('Please enter a valid email address'),
   license: z.string().min(5, 'Please enter a valid license number'),
-  password: z.string().min(8, 'Password must be at least 8 characters'),
+  password: passwordSchema,
   confirmPassword: z.string(),
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Passwords don't match",
@@ -43,7 +43,7 @@ const patientSchema = z.object({
   address: z.string().optional(),
   emergencyContact: z.string().optional(),
   emergencyPhone: z.string().optional(),
-  password: z.string().min(8, 'Password must be at least 8 characters'),
+  password: passwordSchema,
   confirmPassword: z.string(),
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Passwords don't match",
@@ -58,7 +58,7 @@ const physioSchema = z.object({
   license: z.string().min(5, 'Please enter a valid license number'),
   specialization: z.string().optional(),
   centerId: z.string().optional(),
-  password: z.string().min(8, 'Password must be at least 8 characters'),
+  password: passwordSchema,
   confirmPassword: z.string(),
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Passwords don't match",
@@ -72,7 +72,7 @@ const nutritionistSchema = z.object({
   phone: z.string().min(10, 'Please enter a valid phone number'),
   license: z.string().min(5, 'Please enter a valid license number'),
   specialization: z.string().optional(),
-  password: z.string().min(8, 'Password must be at least 8 characters'),
+  password: passwordSchema,
   confirmPassword: z.string(),
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Passwords don't match",
@@ -87,8 +87,6 @@ type NutritionistFormData = z.infer<typeof nutritionistSchema>
 function RegisterPageContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const [showPassword, setShowPassword] = useState(false)
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   
   const defaultRole = searchParams.get('type') as 'center' | 'patient' | 'physio' | 'nutritionist' || 'center'
@@ -436,32 +434,15 @@ function RegisterPageContent() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                    Password *
-                  </label>
-                  <div className="mt-1 relative">
-                    <input
-                      id="password"
-                      type={showPassword ? 'text' : 'password'}
-                      {...centerForm.register('password')}
-                      className="input-field pr-10"
-                      placeholder="Enter password"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                    >
-                      {showPassword ? (
-                        <EyeSlashIcon className="h-5 w-5 text-gray-400" />
-                      ) : (
-                        <EyeIcon className="h-5 w-5 text-gray-400" />
-                      )}
-                    </button>
-                  </div>
-                  {centerForm.formState.errors.password && (
-                    <p className="mt-1 text-sm text-error-600">{centerForm.formState.errors.password.message}</p>
-                  )}
+                  <PasswordInput
+                    value={centerForm.watch('password') || ''}
+                    onChange={(value) => centerForm.setValue('password', value)}
+                    label="Password"
+                    placeholder="Enter password"
+                    error={centerForm.formState.errors.password?.message}
+                    showStrength={true}
+                    required={true}
+                  />
                 </div>
 
                 <div>
@@ -676,32 +657,15 @@ function RegisterPageContent() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                    Password *
-                  </label>
-                  <div className="mt-1 relative">
-                    <input
-                      id="password"
-                      type={showPassword ? 'text' : 'password'}
-                      {...patientForm.register('password')}
-                      className="input-field pr-10"
-                      placeholder="Enter password"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                    >
-                      {showPassword ? (
-                        <EyeSlashIcon className="h-5 w-5 text-gray-400" />
-                      ) : (
-                        <EyeIcon className="h-5 w-5 text-gray-400" />
-                      )}
-                    </button>
-                  </div>
-                  {patientForm.formState.errors.password && (
-                    <p className="mt-1 text-sm text-error-600">{patientForm.formState.errors.password.message}</p>
-                  )}
+                  <PasswordInput
+                    value={patientForm.watch('password') || ''}
+                    onChange={(value) => patientForm.setValue('password', value)}
+                    label="Password"
+                    placeholder="Enter password"
+                    error={patientForm.formState.errors.password?.message}
+                    showStrength={true}
+                    required={true}
+                  />
                 </div>
 
                 <div>
@@ -878,32 +842,15 @@ function RegisterPageContent() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                    Password *
-                  </label>
-                  <div className="mt-1 relative">
-                    <input
-                      id="password"
-                      type={showPassword ? 'text' : 'password'}
-                      {...physioForm.register('password')}
-                      className="input-field pr-10"
-                      placeholder="Enter password"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                    >
-                      {showPassword ? (
-                        <EyeSlashIcon className="h-5 w-5 text-gray-400" />
-                      ) : (
-                        <EyeIcon className="h-5 w-5 text-gray-400" />
-                      )}
-                    </button>
-                  </div>
-                  {physioForm.formState.errors.password && (
-                    <p className="mt-1 text-sm text-error-600">{physioForm.formState.errors.password.message}</p>
-                  )}
+                  <PasswordInput
+                    value={physioForm.watch('password') || ''}
+                    onChange={(value) => physioForm.setValue('password', value)}
+                    label="Password"
+                    placeholder="Enter password"
+                    error={physioForm.formState.errors.password?.message}
+                    showStrength={true}
+                    required={true}
+                  />
                 </div>
 
                 <div>
@@ -1067,32 +1014,15 @@ function RegisterPageContent() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                    Password *
-                  </label>
-                  <div className="mt-1 relative">
-                    <input
-                      id="password"
-                      type={showPassword ? 'text' : 'password'}
-                      {...nutritionistForm.register('password')}
-                      className="input-field pr-10"
-                      placeholder="Enter password"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                    >
-                      {showPassword ? (
-                        <EyeSlashIcon className="h-5 w-5 text-gray-400" />
-                      ) : (
-                        <EyeIcon className="h-5 w-5 text-gray-400" />
-                      )}
-                    </button>
-                  </div>
-                  {nutritionistForm.formState.errors.password && (
-                    <p className="mt-1 text-sm text-error-600">{nutritionistForm.formState.errors.password.message}</p>
-                  )}
+                  <PasswordInput
+                    value={nutritionistForm.watch('password') || ''}
+                    onChange={(value) => nutritionistForm.setValue('password', value)}
+                    label="Password"
+                    placeholder="Enter password"
+                    error={nutritionistForm.formState.errors.password?.message}
+                    showStrength={true}
+                    required={true}
+                  />
                 </div>
 
                 <div>

@@ -37,7 +37,10 @@ model User {
 model Center {
   id          String   @id @default(cuid())
   name        String
-  address     String
+  addressLine String
+  city        String
+  state       String
+  country     String
   phone       String
   email       String   @unique
   license     String   @unique
@@ -63,7 +66,10 @@ model Patient {
   gender      Gender
   phone       String
   email       String?
-  address     String?
+  addressLine String?
+  city        String?
+  state       String?
+  country     String?
   emergencyContact String?
   emergencyPhone   String?
   medicalHistory   String?

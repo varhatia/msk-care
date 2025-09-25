@@ -23,7 +23,10 @@ import { passwordSchema, emailSchema } from '@/lib/passwordValidation'
 
 const centerSchema = z.object({
   centerName: z.string().min(2, 'Center name must be at least 2 characters'),
-  address: z.string().min(10, 'Please enter a complete address'),
+  addressLine: z.string().min(3, 'Please enter address line'),
+  city: z.string().min(2, 'Please enter city'),
+  state: z.string().min(2, 'Please enter state'),
+  country: z.string().min(2, 'Please enter country'),
   phone: z.string().min(10, 'Please enter a valid phone number'),
   email: emailSchema,
   license: z.string().min(5, 'Please enter a valid license number'),
@@ -41,7 +44,10 @@ const patientSchema = z.object({
   phone: z.string().min(10, 'Please enter a valid phone number'),
   dateOfBirth: z.string().min(1, 'Please select your date of birth'),
   gender: z.enum(['MALE', 'FEMALE', 'OTHER']),
-  address: z.string().optional(),
+  addressLine: z.string().optional(),
+  city: z.string().optional(),
+  state: z.string().optional(),
+  country: z.string().optional(),
   emergencyContact: z.string().optional(),
   emergencyPhone: z.string().optional(),
   password: passwordSchema,
@@ -377,23 +383,73 @@ function RegisterPageContent() {
                 </div>
               </div>
 
-              <div>
-                <label htmlFor="address" className="block text-sm font-medium text-gray-700">
-                  Address *
-                </label>
-                <div className="mt-1 relative">
-                  <MapPinIcon className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
-                  <input
-                    id="address"
-                    type="text"
-                    {...centerForm.register('address')}
-                    className="input-field pl-10"
-                    placeholder="Enter complete address"
-                  />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label htmlFor="addressLine" className="block text-sm font-medium text-gray-700">
+                    Address Line *
+                  </label>
+                  <div className="mt-1 relative">
+                    <MapPinIcon className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+                    <input
+                      id="addressLine"
+                      type="text"
+                      {...centerForm.register('addressLine')}
+                      className="input-field pl-10"
+                      placeholder="Street, suite, etc."
+                    />
+                  </div>
+                  {centerForm.formState.errors.addressLine && (
+                    <p className="mt-1 text-sm text-error-600">{centerForm.formState.errors.addressLine.message}</p>
+                  )}
                 </div>
-                {centerForm.formState.errors.address && (
-                  <p className="mt-1 text-sm text-error-600">{centerForm.formState.errors.address.message}</p>
-                )}
+                <div>
+                  <label htmlFor="city" className="block text-sm font-medium text-gray-700">
+                    City *
+                  </label>
+                  <input
+                    id="city"
+                    type="text"
+                    {...centerForm.register('city')}
+                    className="input-field"
+                    placeholder="City"
+                  />
+                  {centerForm.formState.errors.city && (
+                    <p className="mt-1 text-sm text-error-600">{centerForm.formState.errors.city.message}</p>
+                  )}
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label htmlFor="state" className="block text-sm font-medium text-gray-700">
+                    State *
+                  </label>
+                  <input
+                    id="state"
+                    type="text"
+                    {...centerForm.register('state')}
+                    className="input-field"
+                    placeholder="State or Province"
+                  />
+                  {centerForm.formState.errors.state && (
+                    <p className="mt-1 text-sm text-error-600">{centerForm.formState.errors.state.message}</p>
+                  )}
+                </div>
+                <div>
+                  <label htmlFor="country" className="block text-sm font-medium text-gray-700">
+                    Country *
+                  </label>
+                  <input
+                    id="country"
+                    type="text"
+                    {...centerForm.register('country')}
+                    className="input-field"
+                    placeholder="Country"
+                  />
+                  {centerForm.formState.errors.country && (
+                    <p className="mt-1 text-sm text-error-600">{centerForm.formState.errors.country.message}</p>
+                  )}
+                </div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -591,18 +647,58 @@ function RegisterPageContent() {
                 </div>
               </div>
 
-              <div>
-                <label htmlFor="address" className="block text-sm font-medium text-gray-700">
-                  Address
-                </label>
-                <div className="mt-1 relative">
-                  <MapPinIcon className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label htmlFor="addressLine" className="block text-sm font-medium text-gray-700">
+                    Address Line
+                  </label>
+                  <div className="mt-1 relative">
+                    <MapPinIcon className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+                    <input
+                      id="addressLine"
+                      type="text"
+                      {...patientForm.register('addressLine')}
+                      className="input-field pl-10"
+                      placeholder="Street, suite, etc. (optional)"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label htmlFor="city" className="block text-sm font-medium text-gray-700">
+                    City
+                  </label>
                   <input
-                    id="address"
+                    id="city"
                     type="text"
-                    {...patientForm.register('address')}
-                    className="input-field pl-10"
-                    placeholder="Enter address (optional)"
+                    {...patientForm.register('city')}
+                    className="input-field"
+                    placeholder="City (optional)"
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label htmlFor="state" className="block text-sm font-medium text-gray-700">
+                    State
+                  </label>
+                  <input
+                    id="state"
+                    type="text"
+                    {...patientForm.register('state')}
+                    className="input-field"
+                    placeholder="State or Province (optional)"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="country" className="block text-sm font-medium text-gray-700">
+                    Country
+                  </label>
+                  <input
+                    id="country"
+                    type="text"
+                    {...patientForm.register('country')}
+                    className="input-field"
+                    placeholder="Country (optional)"
                   />
                 </div>
               </div>
